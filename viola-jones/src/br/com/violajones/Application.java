@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class Application {
-
     private static Integer TAMANHO = 250;
     private static Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
     private static String caminho = "C:\\Users\\Qintess\\Pictures\\facial\\";
@@ -16,8 +15,6 @@ public class Application {
         File file = new File(caminho+"chaves.png");
         comecar(file);
     }
-
-
 
 
     private static void comecar(File file) throws IOException {
@@ -38,9 +35,6 @@ public class Application {
     }
 
     private static Integer getPixelNormalizado(Integer p2) {
-        //	System.out.println(p2);
-
-     //   int a3 = (p2>>24)&0xff;
         int r3 = (p2>>16)&0xff;
         int g3 = (p2>>8)&0xff;
         int b3 =  p2&0xff;
@@ -51,7 +45,6 @@ public class Application {
 
     private static void remontarFoto(Integer[][] foto) {
         BufferedImage image = new BufferedImage(TAMANHO, TAMANHO, BufferedImage.TYPE_INT_RGB);
-
         for (int linha = 0; linha < TAMANHO; linha++) {
             for (int coluna = 0; coluna < TAMANHO; coluna++) {
                 Integer integer = foto[linha][coluna];
@@ -65,6 +58,5 @@ public class Application {
         } catch (IOException e) {
             System.out.println("Erro ao criar:" + e.getCause());
         }
-
     }
 }
