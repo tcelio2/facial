@@ -1,46 +1,92 @@
 package br.com.violajones;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 
 public class Application {
     private static Integer TAMANHO = 250;
     private static Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
-    private static String caminho = "C:\\Users\\Qintess\\Pictures\\facial\\";
+    //private static String caminho = "C:\\Users\\Qintess\\Pictures\\facial\\";
+    private static String caminho = "/home/hal9000/Pictures/facial/";
+    private static String foto = "black.png";//ponto.png chaves.png black.png green.png red.png yellow.png blue.png
 
     public static void main(String[] args) throws IOException {
         System.out.println("---");
-        File file = new File(caminho+"chaves.png");
-        comecar(file);
+        File file = new File(caminho+foto);
+        Integer[][] novaMatriz = normalizarFoto(file);
+        //remontarFoto(novaMatriz);
+        Detector.detectarQuadrado(montarExemplo());
+    }
+
+    private static Integer[][] montarExemplo() {
+        Integer[][] value = {{1, 2,  3, 4},
+                             {5, 6,  0, 7},
+                             {7, 9, 12, 1},
+                             {1, 2, 10, 3}
+                            };
+        return value;
     }
 
 
-    private static void comecar(File file) throws IOException {
+    private static Integer[][] normalizarFoto(File file) throws IOException {
         BufferedImage image = ImageIO.read(file);
         try {
             for (int linha = 0; linha < TAMANHO; linha++) {
                 for (int coluna = 0; coluna < TAMANHO; coluna++) {
                     int p2 = image.getRGB(linha, coluna);
+                    //Raster imageData = image.getData();
+
                     novaMatriz[linha][coluna] = getPixelNormalizado(p2);
-                    //matrizPrincipal_procurada[k][numeroFoto] = getPixelNormalizado(p2);
-                    //k++;
                 }
             }
-        remontarFoto(novaMatriz);
+            return novaMatriz;
+
         }catch(Exception e){
             System.out.println("Erro: "+e.getCause());
         }
+        return null;
     }
 
     private static Integer getPixelNormalizado(Integer p2) {
+        Color c = new Color(p2);
+        int red   = c.getRed();
+        int green = c.getGreen();
+        int blue  = c.getBlue();
+      //  System.out.println(red+"-"+blue+"-"+green);
+        int pixelRgb = (red+green+blue) / 3;
+
+
+        int a3 = (p2>>24)&0xff;
+
         int r3 = (p2>>16)&0xff;
         int g3 = (p2>>8)&0xff;
         int b3 =  p2&0xff;
-        int avg = (b3+g3+r3)/3;
-        int pixel = (avg<<16) | (avg<<8) | avg;
-        return pixel;
+
+        int avg = (r3+g3+b3)/3;
+        int pixel = (a3<<24) | (avg<<16) | (avg<<8) | avg;
+       // int pixel2 = (a3<<24) | (r3<<16) | (g3<<8) | b3;
+        return pixelRgb;
+    }
+
+    private static Integer getPixelNormalizado2(Integer p2) {
+
+        int r = (p2>>16)&0xff;
+        int g = (p2>>8)&0xff;
+        int b =  p2&0xff;
+
+        float rr = (float) Math.pow(r / 255.0, 2.2);
+        float gg = (float) Math.pow(g / 255.0, 2.2);
+        float bb = (float) Math.pow(b / 255.0, 2.2);
+
+        float lum = (float) (0.2126 * rr + 0.7152 * gg + 0.0722 * bb);
+
+        int grayLevel = (int) (255.0 * Math.pow(lum, 1.0 / 2.2));
+        int pixelGrey = (grayLevel << 16) + (grayLevel << 8) + grayLevel;
+        return pixelGrey;
     }
 
     private static void remontarFoto(Integer[][] foto) {
