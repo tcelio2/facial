@@ -3,7 +3,6 @@ package br.com.violajones;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,21 +11,26 @@ public class Application {
     private static Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
     //private static String caminho = "C:\\Users\\Qintess\\Pictures\\facial\\";
     private static String caminho = "/home/hal9000/Pictures/facial/";
-    private static String foto = "black.png";//ponto.png chaves.png black.png green.png red.png yellow.png blue.png
+    private static String foto = "ponto.png";//ponto.png chaves.png black.png green.png red.png yellow.png blue.png
 
     public static void main(String[] args) throws IOException {
         System.out.println("---");
-        File file = new File(caminho+foto);
-        Integer[][] novaMatriz = normalizarFoto(file);
+        //File file = new File(caminho+foto);
+        //Integer[][] novaMatriz = normalizarFoto(file);
         //remontarFoto(novaMatriz);
-        Detector.detectarQuadrado(montarExemplo());
+        Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(montarExemplo());
+        //Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(novaMatriz);
+        Print2D.printMatrix(matrizNormalizada);
+        Detector.identificar(1, 1, matrizNormalizada);
     }
 
     private static Integer[][] montarExemplo() {
-        Integer[][] value = {{1, 2,  3, 4},
-                             {5, 6,  0, 7},
-                             {7, 9, 12, 1},
-                             {1, 2, 10, 3}
+        Integer[][] value = {{1, 2, 3, 4, 6, 0},
+                             {5, 0, 0, 7, 4, 2},
+                             {7, 0, 0, 1, 1, 9},
+                             {1, 2, 10,3, 8, 7},
+                             {1, 2, 10,3, 8, 7},
+                             {5, 0, 0, 7, 4, 2}
                             };
         return value;
     }
@@ -38,7 +42,6 @@ public class Application {
             for (int linha = 0; linha < TAMANHO; linha++) {
                 for (int coluna = 0; coluna < TAMANHO; coluna++) {
                     int p2 = image.getRGB(linha, coluna);
-                    //Raster imageData = image.getData();
 
                     novaMatriz[linha][coluna] = getPixelNormalizado(p2);
                 }

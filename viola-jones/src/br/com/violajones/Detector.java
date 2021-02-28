@@ -1,30 +1,49 @@
 package br.com.violajones;
 
 public class Detector {
-    private static Integer TAMANHO = 4;
+    private static Integer TAMANHO = 6;
 
-
-    public static void detectarQuadrado(Integer[][] image) {
-        Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
-        for (int linha = 0; linha < TAMANHO; linha++) {
-            for (int coluna = 0; coluna < TAMANHO; coluna++) {
-                novaMatriz[linha][coluna] = calcularSomatoriaTrecho(linha, coluna, image);
+    public static String identificar(int altura, int largura, Integer[][] matriz) {
+        //Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
+        for (int linha = altura; linha < TAMANHO; linha = linha + altura) {
+            for (int coluna = largura; coluna < TAMANHO; coluna = coluna + largura) {
+                //System.out.println(matriz[linha][coluna]);
+                Integer media = calcularMedia(matriz, linha, coluna ,altura); //altura=largura=2,4 16
+                Integer media2 = extrairValor(matriz, linha, coluna ,altura); //altura=largura=2,4 16
+                if(media2 != 0)
+                    System.out.println("Media:"+media2);
 
             }
         }
-        System.out.println("=>"+novaMatriz);
+        return null;
     }
 
-    private static Integer calcularSomatoriaTrecho(int x, int y, Integer[][] image) {
+    private static Integer extrairValor(Integer[][] matriz, int linha, int coluna, int area) {
         Integer somatoria = 0;
-        for (int linha = 0; linha <= x ; linha++) {
-            for (int coluna = 0; coluna <= y ; coluna++) {
-                somatoria += image[linha][coluna];
+        Integer a = matriz[linha-area][coluna-area];
+        Integer c = matriz[linha][coluna-area];
+        Integer b = matriz[linha-area][coluna];
+        Integer d = matriz[linha][coluna];
 
-            }
-        }
-        return somatoria;
+                //p += matriz[linha-i][coluna-j];
+                System.out.println("a->"+a);
+                System.out.println("b->"+b);
+                System.out.println("c->"+c);
+                System.out.println("d->"+d);
+                somatoria = d - b - c + a;
+        System.out.println("\n");
+        return somatoria/(area*area);
     }
 
-
+    private static Integer calcularMedia(Integer[][] matriz, int linha, int coluna, int area) {
+        Integer p = 0;
+        for(int i = area; i >= 0; i--) {
+            for (int j = area; j >= 0; j--) {
+                p = matriz[linha-i][coluna-j];
+                System.out.println("->"+p);
+            }
+        }
+        System.out.println("\n");
+        return p/area;
+    }
 }
