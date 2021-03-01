@@ -1,14 +1,13 @@
 package br.com.violajones;
 
 public class Normalizador {
-    private static Integer TAMANHO = 6;
+    private static Integer TAMANHO = 250;
 
     public static Integer[][] normalizarMatriz(Integer[][] image) {
         Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
         for (int linha = 0; linha < TAMANHO; linha++) {
             for (int coluna = 0; coluna < TAMANHO; coluna++) {
                 novaMatriz[linha][coluna] = calcularSomatoriaTrecho(linha, coluna, image);
-
             }
         }
         return novaMatriz;

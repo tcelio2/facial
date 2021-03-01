@@ -1,27 +1,39 @@
 package br.com.violajones;
 
+
+import br.com.violajones.bean.Pontos;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class Application {
     private static Integer TAMANHO = 250;
     private static Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
+    private static Integer[][] novaMatrizSemAlteracao = new Integer[TAMANHO][TAMANHO];
+
     //private static String caminho = "C:\\Users\\Qintess\\Pictures\\facial\\";
     private static String caminho = "/home/hal9000/Pictures/facial/";
     private static String foto = "ponto.png";//ponto.png chaves.png black.png green.png red.png yellow.png blue.png
 
     public static void main(String[] args) throws IOException {
         System.out.println("---");
-        //File file = new File(caminho+foto);
-        //Integer[][] novaMatriz = normalizarFoto(file);
-        //remontarFoto(novaMatriz);
-        Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(montarExemplo());
-        //Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(novaMatriz);
-        Print2D.printMatrix(matrizNormalizada);
-        Detector.identificar(1, 1, matrizNormalizada);
+        File file = new File(caminho+foto);
+
+        Integer[][] novaMatrizSemAlteracao = normalizarFotoSemAlterar(file);
+
+        Integer[][] novaMatriz = normalizarFoto(file);
+        Print2D.printMatrix(novaMatriz);
+        remontarFoto(novaMatrizSemAlteracao);
+        //Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(montarExemplo());
+        Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(novaMatriz);
+        //Print2D.printMatrix(matrizNormalizada);
+
+        List<Pontos> identificado = Detector.identificar(16, 16, matrizNormalizada);
+        Print2D.printarLocalizacao(novaMatrizSemAlteracao, identificado.get(0));
     }
 
     private static Integer[][] montarExemplo() {
@@ -35,6 +47,24 @@ public class Application {
         return value;
     }
 
+
+    private static Integer[][] normalizarFotoSemAlterar(File file) throws IOException {
+        BufferedImage image = ImageIO.read(file);
+        try {
+            for (int linha = 0; linha < TAMANHO; linha++) {
+                for (int coluna = 0; coluna < TAMANHO; coluna++) {
+                    int p2 = image.getRGB(linha, coluna);
+
+                    novaMatrizSemAlteracao[linha][coluna] = getPixelSemAlterar(p2);
+                }
+            }
+            return novaMatrizSemAlteracao;
+
+        }catch(Exception e){
+            System.out.println("Erro: "+e.getCause());
+        }
+        return null;
+    }
 
     private static Integer[][] normalizarFoto(File file) throws IOException {
         BufferedImage image = ImageIO.read(file);
@@ -52,6 +82,17 @@ public class Application {
             System.out.println("Erro: "+e.getCause());
         }
         return null;
+    }
+
+
+    private static Integer getPixelSemAlterar(Integer p2) {
+        int a3 = (p2>>24)&0xff;
+        int r3 = (p2>>16)&0xff;
+        int g3 = (p2>>8)&0xff;
+        int b3 =  p2&0xff;
+
+        int pixel = (a3<<24) | (r3<<16) | (g3<<8) | b3;
+        return pixel;
     }
 
     private static Integer getPixelNormalizado(Integer p2) {

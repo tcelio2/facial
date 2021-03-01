@@ -1,24 +1,32 @@
 package br.com.violajones;
 
+
+import br.com.violajones.bean.Pontos;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Detector {
-    private static Integer TAMANHO = 6;
+    private static Integer TAMANHO = 250;
 
-    public static String identificar(int altura, int largura, Integer[][] matriz) {
+    public static List<Pontos> identificar(int altura, int largura, Integer[][] matriz) {
         //Integer[][] novaMatriz = new Integer[TAMANHO][TAMANHO];
-        for (int linha = altura; linha < TAMANHO; linha = linha + altura) {
-            for (int coluna = largura; coluna < TAMANHO; coluna = coluna + largura) {
+        List<Pontos> pontosList = new ArrayList<>();
+        for (int linha = altura; linha < TAMANHO; linha++) {
+            for (int coluna = largura; coluna < TAMANHO; coluna++) {
                 //System.out.println(matriz[linha][coluna]);
-                Integer media = calcularMedia(matriz, linha, coluna ,altura); //altura=largura=2,4 16
-                Integer media2 = extrairValor(matriz, linha, coluna ,altura); //altura=largura=2,4 16
-                if(media2 != 0)
-                    System.out.println("Media:"+media2);
+                //Integer media = calcularMedia(matriz, linha, coluna, altura); //altura=largura=2,4 16
+                Pontos pontos = extrairValor(matriz, linha, coluna, altura);//altura=largura=2,4 16
 
+                if(pontos.getX1() != 0)
+                    pontosList.add(pontos);
             }
         }
-        return null;
+       return pontosList;
     }
 
-    private static Integer extrairValor(Integer[][] matriz, int linha, int coluna, int area) {
+    private static Pontos extrairValor(Integer[][] matriz, int linha, int coluna, int area) {
+        Pontos p = new Pontos();
         Integer somatoria = 0;
         Integer a = matriz[linha-area][coluna-area];
         Integer c = matriz[linha][coluna-area];
@@ -26,13 +34,30 @@ public class Detector {
         Integer d = matriz[linha][coluna];
 
                 //p += matriz[linha-i][coluna-j];
-                System.out.println("a->"+a);
-                System.out.println("b->"+b);
-                System.out.println("c->"+c);
-                System.out.println("d->"+d);
+//                System.out.println("a->"+a);
+//                System.out.println("b->"+b);
+//                System.out.println("c->"+c);
+//                System.out.println("d->"+d);
                 somatoria = d - b - c + a;
-        System.out.println("\n");
-        return somatoria/(area*area);
+                Integer result = somatoria/(area*area);
+       // System.out.println("=>"+result);
+                if(result == 0){
+                    System.out.println("-->"+result+"posicao: " +
+                            "A:"+(linha-area)+"-"+(coluna-area)+" " +
+                            "B:"+(linha)+"-"+(coluna-area)+" " +
+                            "C:"+(linha-area)+"-"+(coluna)+" " +
+                            "D:"+(linha)+"-"+(coluna));
+
+                    p.setX1(linha-area);
+                    p.setY1(coluna-area);
+                    p.setX2(linha);
+                    p.setY2(coluna-area);
+                    p.setX3(linha-area);
+                    p.setY3(coluna);
+                    p.setX4(linha);
+                    p.setY4(coluna);
+                }
+        return p;
     }
 
     private static Integer calcularMedia(Integer[][] matriz, int linha, int coluna, int area) {
@@ -40,10 +65,10 @@ public class Detector {
         for(int i = area; i >= 0; i--) {
             for (int j = area; j >= 0; j--) {
                 p = matriz[linha-i][coluna-j];
-                System.out.println("->"+p);
+                //System.out.println("->"+p);
             }
         }
-        System.out.println("\n");
+        //System.out.println("\n");
         return p/area;
     }
 }
