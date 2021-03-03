@@ -3,6 +3,8 @@ package br.com.violajones;
 import br.com.violajones.bean.Pontos;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +28,13 @@ public class Print2D {
     public static void printarLocalizacao(Integer[][] matriz, Pontos localizacao) {
 
         printarX(matriz, localizacao);
-        remontarFotoMarcada(matriz);
+        //remontarFotoMarcada(matriz);
+    }
+
+    public static void printarLocalizacao2(File matriz, Pontos localizacao) throws IOException {
+
+        printar(matriz, localizacao);
+        //remontarFotoMarcada(matriz);
     }
 
     private static void printarX(Integer[][] matriz, Pontos ponto) {
@@ -45,18 +53,38 @@ public class Print2D {
 
     }
 
-    private static void remontarFotoMarcada(Integer[][] foto) {
+    public static void printar(File myPicFile, Pontos local) throws IOException {
+        BufferedImage myPicture = ImageIO.read(myPicFile);
+        Graphics2D g = (Graphics2D) myPicture.getGraphics();
+        g.setStroke(new BasicStroke(3));
+        g.setColor(Color.RED);
+        int x = local.getX1()-10;
+        int y = local.getY1()-10;
+
+        int width = local.getX4() - local.getX3() +20;
+        int heigt = local.getY4() - local.getY2() +20;
+        g.drawRect(x, y, width, heigt);
+
+
+        JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+        JPanel jPanel = new JPanel();
+        jPanel.add(picLabel);
+        JFrame f = new JFrame();
+        f.setSize(new Dimension(myPicture.getWidth(), myPicture.getHeight()));
+        f.add(jPanel);
+        f.setVisible(true);
+        //1A    2B
+
+        //3C     4D
+    }
+
+
+    private static void remontarFotoMarcada(File foto) {
         BufferedImage image = new BufferedImage(TAMANHO, TAMANHO, BufferedImage.TYPE_INT_RGB);
-        for (int linha = 0; linha < TAMANHO; linha++) {
-            for (int coluna = 0; coluna < TAMANHO; coluna++) {
-                Integer integer = foto[linha][coluna];
-                image.setRGB(linha, coluna, integer);
-            }
-        }
         File f2 = null;
         f2 = new File(caminho+"treeArray.jpg");
         try {
-            ImageIO.write(image, "jpg", f2);
+            ImageIO.write(image, "jpg", foto);
         } catch (IOException e) {
             System.out.println("Erro ao criar:" + e.getCause());
         }

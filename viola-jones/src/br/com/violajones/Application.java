@@ -32,8 +32,8 @@ public class Application {
         Integer[][] matrizNormalizada = Normalizador.normalizarMatriz(novaMatriz);
         //Print2D.printMatrix(matrizNormalizada);
 
-        List<Pontos> identificado = Detector.identificar(16, 16, matrizNormalizada);
-        Print2D.printarLocalizacao(novaMatrizSemAlteracao, identificado.get(0));
+        List<Pontos> identificado = Detector.identificar(40, 40, matrizNormalizada);
+        Print2D.printarLocalizacao2(file, identificado.get(0));
     }
 
     private static Integer[][] montarExemplo() {
